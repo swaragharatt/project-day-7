@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Quote Generator</title>
+  <style>
+    :root {
+      --bg: #000;
+      --card: #000;
+      --accent: #8f44ad;
+      --text: #fafafa;
+    }
+    body {
+      background: var(--bg);
+      min-height: 100vh;
+      margin: 0;
+      color: var(--text);
+      font-family: 'Segoe UI', Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .card {
+      background: var(--card);
+      border-radius: 18px;
+      text-align: center;
+      padding: 32px 34px;
+      width: 470px;
+      box-shadow: 0 0 32px #1a1a1a;
+      border: 2px solid var(--accent);
+      margin-top: 20px;
+    }
+    .headline {
+      color: var(--accent);
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 24px;
+      letter-spacing: 1.2px;
+    }
+    .categories {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .category-btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 18px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: background 0.25s;
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+    .category-btn.selected,
+    .category-btn:hover {
+      background: #62097a;
+    }
+    .quote-text {
+      font-size: 1.35rem;
+      margin-bottom: 22px;
+      color: var(--accent);
+      font-weight: 500;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      min-height: 90px;
+    }
+    .author {
+      font-style: italic;
+      font-size: 1.07rem;
+      color: var(--text);
+      margin-bottom: 28px;
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+    .button {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      padding: 13px 32px;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 12px;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      transition: background 0.2s;
+    }
+    .button:hover {
+      background: #62097a;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="headline">Quote Generator</div>
+    <div class="categories" id="categoryButtons"></div>
+    <div class="quote-text" id="quoteText"></div>
+    <div class="author" id="authorText"></div>
+    <button class="button" id="nextQuoteBtn">Next Quote</button>
+  </div>
+  <script>
+    // 10 quotes per category for rich variety
+    const quotes = [
+      // Success
+      { text: "Success is not the key to happiness. Happiness is the key to success.", author: "Albert Schweitzer", category: "Success" },
+      { text: "Don’t watch the clock; do what it does. Keep going.", author: "Sam Levenson", category: "Success" },
+      { text: "Success usually comes to those who are too busy to be looking for it.", author: "Henry David Thoreau", category: "Success" },
+      { text: "Don't be afraid to give up the good to go for the great.", author: "John D. Rockefeller", category: "Success" },
+      { text: "Success is walking from failure to failure with no loss of enthusiasm.", author: "Winston Churchill", category: "Success" },
+      { text: "The road to success and the road to failure are almost exactly the same.", author: "Colin R. Davis", category: "Success" },
+      { text: "Success is how high you bounce when you hit bottom.", author: "George S. Patton", category: "Success" },
+      { text: "If you really look closely, most overnight successes took a long time.", author: "Steve Jobs", category: "Success" },
+      { text: "Opportunity is missed by most people because it is dressed in overalls and looks like work.", author: "Thomas Edison", category: "Success" },
+      { text: "Success doesn’t come to you; you go to it.", author: "Marva Collins", category: "Success" },
+
+      // Motivation
+      { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt", category: "Motivation" },
+      { text: "Act as if what you do makes a difference. It does.", author: "William James", category: "Motivation" },
+      { text: "Keep going. Everything you need is already inside you.", author: "Unknown", category: "Motivation" },
+      { text: "You are never too old to set another goal or to dream a new dream.", author: "C.S. Lewis", category: "Motivation" },
+      { text: "What you get by achieving your goals is not as important as what you become by achieving your goals.", author: "Zig Ziglar", category: "Motivation" },
+      { text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt", category: "Motivation" },
+      { text: "Don't limit your challenges. Challenge your limits.", author: "Unknown", category: "Motivation" },
+      { text: "Dream it. Believe it. Build it.", author: "Unknown", category: "Motivation" },
+      { text: "Start where you are. Use what you have. Do what you can.", author: "Arthur Ashe", category: "Motivation" },
+      { text: "Success is the sum of small efforts, repeated day in and day out.", author: "Robert Collier", category: "Motivation" },
+
+      // Inspiration
+      { text: "With the new day comes new strength and new thoughts.", author: "Eleanor Roosevelt", category: "Inspiration" },
+      { text: "Do what you can, with what you have, where you are.", author: "Theodore Roosevelt", category: "Inspiration" },
+      { text: "The only way to do great work is to love what you do.", author: "Steve Jobs", category: "Inspiration" },
+      { text: "Dream big and dare to fail.", author: "Norman Vaughan", category: "Inspiration" },
+      { text: "Turn your wounds into wisdom.", author: "Oprah Winfrey", category: "Inspiration" },
+      { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill", category: "Inspiration" },
+      { text: "Life is 10% what happens to us and 90% how we react to it.", author: "Charles R. Swindoll", category: "Inspiration" },
+      { text: "Start by doing what's necessary; then do what's possible; and suddenly you are doing the impossible.", author: "Francis of Assisi", category: "Inspiration" },
+      { text: "Keep your face always toward the sunshine—and shadows will fall behind you.", author: "Walt Whitman", category: "Inspiration" },
+      { text: "The best way out is always through.", author: "Robert Frost", category: "Inspiration" },
+
+      // Art
+      { text: "Every artist was first an amateur.", author: "Ralph Waldo Emerson", category: "Art" },
+      { text: "Art enables us to find ourselves and lose ourselves at the same time.", author: "Thomas Merton", category: "Art" },
+      { text: "Art is the only way to run away without leaving home.", author: "Twyla Tharp", category: "Art" },
+      { text: "Creativity takes courage.", author: "Henri Matisse", category: "Art" },
+      { text: "Inspiration exists, but it has to find you working.", author: "Pablo Picasso", category: "Art" },
+      { text: "The artist is nothing without the gift, but the gift is nothing without work.", author: "Emile Zola", category: "Art" },
+      { text: "Great art picks up where nature ends.", author: "Marc Chagall", category: "Art" },
+      { text: "Art should comfort the disturbed and disturb the comfortable.", author: "Banksy", category: "Art" },
+      { text: "The purpose of art is washing the dust of daily life off our souls.", author: "Pablo Picasso", category: "Art" },
+      { text: "Every child is an artist. The problem is how to remain an artist once we grow up.", author: "Pablo Picasso", category: "Art" }
+    ];
+
+    const categories = Array.from(new Set(quotes.map(q => q.category)));
+    const categoryButtons = document.getElementById('categoryButtons');
+    const quoteText = document.getElementById('quoteText');
+    const authorText = document.getElementById('authorText');
+    const nextQuoteBtn = document.getElementById('nextQuoteBtn');
+
+    let currentCategory = categories[0];
+    let filteredQuotes = quotes.filter(q => q.category === currentCategory);
+
+    function generateCategoryButtons() {
+      categories.forEach(category => {
+        const btn = document.createElement('button');
+        btn.textContent = category;
+        btn.className = 'category-btn' + (category === currentCategory ? ' selected' : '');
+        btn.onclick = () => {
+          if (category !== currentCategory) {
+            currentCategory = category;
+            filteredQuotes = quotes.filter(q => q.category === currentCategory);
+            updateCategorySelection();
+            showRandomQuote();
+          }
+        };
+        categoryButtons.appendChild(btn);
+      });
+    }
+
+    function updateCategorySelection() {
+      const buttons = categoryButtons.querySelectorAll('button');
+      buttons.forEach(btn => {
+        btn.classList.toggle('selected', btn.textContent === currentCategory);
+      });
+    }
+
+    function showRandomQuote() {
+      if (filteredQuotes.length === 0) {
+        quoteText.textContent = "No quotes available in this category.";
+        authorText.textContent = "";
+        return;
+      }
+      const idx = Math.floor(Math.random() * filteredQuotes.length);
+      quoteText.textContent = '“' + filteredQuotes[idx].text + '”';
+      authorText.textContent = "- " + filteredQuotes[idx].author;
+    }
+
+    nextQuoteBtn.addEventListener('click', showRandomQuote);
+
+    // Initialize
+    generateCategoryButtons();
+    showRandomQuote();
+  </script>
+</body>
+</html>
