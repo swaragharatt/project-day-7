@@ -9,7 +9,7 @@ This project allows users to generate random quotes across multiple categories w
 ## Features
 
 -  Generate random quotes with author attribution  
-- 🏷 Category filters (Success, Motivation, Inspiration, Art)  
+-  Category filters (Success, Motivation, Inspiration, Art)  
 -  Dark-themed UI with purple accent colors  
 -  Smooth hover effects and transitions  
 -  Responsive design across all devices  
